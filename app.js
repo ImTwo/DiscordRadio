@@ -9,7 +9,6 @@ const bot = new Discord.Client();
 bot.login(token);
 
 
-
 // Stations
 const stations = [];
 const nrj = bot.voice.createBroadcast();
@@ -45,31 +44,31 @@ bot.on('message', async message => {
 	if (!args[1]) {
 		howto();
 		return;
-	};
+	}
+	if (!message.member.voice.channel) {
+		message.channel.send("You need to join a voice channel first!");
+	}
 	switch (args[1]) {
 		case "play":
 			if (!args[2]) {
 				howto();
 				return;
-			};
+			}
 			if (stations[args[2]]) {
-				if (message.member.voice.channel) {
-					connection[message.guild.id] = await message.member.voice.channel.join();
-					if (args[2] === "nrj") {
-						connection[message.guild.id].play(nrj);
-						return;
-					}
-					if (args[2] === "nova") {
-						connection[message.guild.id].play(nova);
-						return;
-					}
-				} else {
-					message.channel.send("You need to join a voice channel first!");
+				connection[message.guild.id] = await message.member.voice.channel.join();
+				if (args[2] === "nrj") {
+					connection[message.guild.id].play(nrj);
+					return;
+				}
+				if (args[2] === "nova") {
+					connection[message.guild.id].play(nova);
+					return;
 				}
 			} else {
 				message.channel.send("I didn't recognize that radio station. You can get available stations with ``' + prefix + 'radio stations``");
 				return;
 			}
+			return;
 		case "stop":
 			if (!message.member.voice.channel) {
 				message.channel.send("You have to be in a voice channel to stop the music!");
